@@ -1,0 +1,44 @@
+# Binaries and builds
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Wails
+*wails*
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/node_modules/
+frontend/.wails/
+frontend/build/
+
+# Go
+*.o
+*.a
+*.test
+*.out
+go.work
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
