@@ -1,13 +1,13 @@
 :root {
-  --bg-color: transparent;
-  --sidebar-bg: rgba(32, 32, 32, 0.45);
-  --card-bg: rgba(255, 255, 255, 0.04);
-  --card-hover: rgba(255, 255, 255, 0.08);
+  --bg-color: #0f172a;
+  --sidebar-bg: #1e293b;
+  --card-bg: #1e293b;
+  --card-hover: #334155;
   --accent-color: #60a5fa;
   --accent-hover: #3b82f6;
   --text-main: #ffffff;
   --text-dim: #a1a1aa;
-  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color: #334155;
   --success: #4ade80;
   --error: #f87171;
   --warning: #fbbf24;
@@ -40,7 +40,6 @@ body {
 .sidebar {
   width: 280px;
   background-color: var(--sidebar-bg);
-  backdrop-filter: blur(20px) saturate(120%);
   border-right: 1px solid var(--border-color);
   padding: 32px 16px;
   display: flex;
@@ -103,7 +102,7 @@ body {
   flex: 1;
   padding: 0 40px;
   overflow-y: auto;
-  background: transparent; /* Remove the background tint */
+  background: var(--bg-color); 
   display: flex;
   flex-direction: column;
   padding-bottom: 120px;
@@ -117,8 +116,7 @@ header {
   top: 0;
   z-index: 10;
   padding: 32px 0 24px;
-  background: transparent;
-  backdrop-filter: blur(8px);
+  background: var(--bg-color);
 }
 
 .search-container { 
@@ -130,7 +128,7 @@ header {
 
 header input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.06);
+  background: #1e293b;
   border: 1px solid var(--border-color);
   padding: 10px 16px;
   border-radius: var(--radius-md);
@@ -141,7 +139,7 @@ header input {
 }
 
 header input:focus {
-  background: rgba(0, 0, 0, 0.3);
+  background: #0f172a;
   border-color: var(--accent-color);
 }
 
@@ -151,7 +149,7 @@ header input:focus {
 }
 
 .secondary-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: #1e293b;
   color: var(--text-main);
   border: 1px solid var(--border-color);
   padding: 0 16px;
@@ -167,13 +165,12 @@ header input:focus {
 }
 
 .secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #334155;
   border-color: rgba(255, 255, 255, 0.2);
 }
 
 .secondary-btn:active {
   transform: scale(0.98);
-  background: rgba(255, 255, 255, 0.03);
 }
 
 .install-btn {
@@ -312,12 +309,12 @@ header input:focus {
 
 /* --- TERMINAL & ALERTS --- */
 .terminal-toggle-btn {
-  position: fixed; bottom: 24px; right: 24px; background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(20px); color: white; border: 1px solid var(--border-color);
+  position: fixed; bottom: 24px; right: 24px; background: #0f172a;
+  color: white; border: 1px solid var(--border-color);
   padding: 10px 24px; border-radius: 20px; cursor: pointer; z-index: 1001; font-size: 0.85rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-.terminal-toggle-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-color); }
+.terminal-toggle-btn:hover { background: #1e293b; border-color: var(--accent-color); }
 
 .terminal-panel {
   position: fixed;
@@ -414,3 +411,4 @@ header input:focus {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+

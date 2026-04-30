@@ -25,15 +25,14 @@ func main() {
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
-		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0}, // Set alpha to 0 for transparency
+		BackgroundColour: &options.RGBA{R: 15, G: 23, B: 42, A: 255}, 
 		OnStartup:        a.Startup,
 		Bind: []interface{}{
 			a,
 		},
 		Windows: &windows.Options{
-			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
-			BackdropType:         windows.Mica,
+			WebviewIsTransparent: false,
+			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
 			Theme:                windows.Dark,
 		},

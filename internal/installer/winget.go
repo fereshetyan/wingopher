@@ -5,7 +5,6 @@ import (
 	"io"
 	"os/exec"
 	"strings"
-	"syscall"
 	"wingo/internal/models"
 )
 
@@ -17,14 +16,14 @@ func NewWingetInstaller() *WingetInstaller {
 
 func (i *WingetInstaller) IsAdmin() bool {
 	cmd := exec.Command("net", "session")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd.SysProcAttr = getSysProcAttr()
 	err := cmd.Run()
 	return err == nil
 }
 
 func (i *WingetInstaller) CheckWinget() bool {
 	cmd := exec.Command("winget", "--version")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd.SysProcAttr = getSysProcAttr()
 	err := cmd.Run()
 	return err == nil
 }
@@ -42,7 +41,7 @@ func (i *WingetInstaller) IsInstalled(wingetID string) bool {
 		return false
 	}
 	cmd := exec.Command("winget", "list", "--id", wingetID, "--exact")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd.SysProcAttr = getSysProcAttr()
 	err := cmd.Run()
 	return err == nil
 }
@@ -50,7 +49,7 @@ func (i *WingetInstaller) IsInstalled(wingetID string) bool {
 func (i *WingetInstaller) GetInstalledIDs() (map[string]bool, error) {
 	// Use a very wide terminal width to minimize wrapping
 	cmd := exec.Command("cmd", "/c", "set Microsoft.Winget.Settings_TermWidth=500 && chcp 65001 > nul && winget list --accept-source-agreements")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd.SysProcAttr = getSysProcAttr()
 	
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -94,7 +93,7 @@ func (i *WingetInstaller) runWingetCommand(args []string, onLog func(string)) (s
 	// Join args and escape if necessary, but here we just need to prepend chcp
 	fullArgs := append([]string{"/c", "chcp 65001 > nul && winget"}, args...)
 	cmd := exec.Command("cmd", fullArgs...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd.SysProcAttr = getSysProcAttr()
 
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
