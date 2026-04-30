@@ -1,8 +1,12 @@
+<div align="center">
+
 # WinGopher - Parallel Windows App Installer
 
 <img src="assets/images/wingopher.png" width="400" alt="WinGopher Logo">
 
 A modern, high-performance application installer for Windows that provides a GUI for the winget package manager, built with Wails (Go + React/TS).
+
+</div>
 
 ## Features
 
