@@ -9,7 +9,7 @@
   [![License](https://img.shields.io/github/license/fereshetyan/wingopher?style=flat-square)](LICENSE)
   [![Platform](https://img.shields.io/badge/platform-Windows-blue?style=flat-square&logo=windows)](https://www.microsoft.com/windows)
 
-  A modern, high-performance GUI for the Windows Package Manager (winget).
+  A simple GUI for the Windows Package Manager (winget).
 </div>
 
 ---
