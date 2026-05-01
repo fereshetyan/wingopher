@@ -31,15 +31,8 @@ iwr -useb https://raw.githubusercontent.com/fereshetyan/wingopher/main/install.p
 - **Winget Integration**: Full interaction with Windows Package Manager CLI.
 - **Batch Operations**: Select and install multiple apps at once.
 - **Uninstall Support**: Remove installed applications directly from the interface.
+- **Update Support**: Update installed applications directly from the interface.
 - **Real-time Log Streaming**: Live CLI output display during installations and uninstalls.
-
-### 🎨 User Interface
-- **Modern Clean Design**: Professional and focused UI for efficient application management.
-- **Dark Theme**: Consistent dark color scheme across all components.
-- **200+ Applications**: Curated app database across 10+ categories.
-- **Real-time Search**: Filter apps by name or description instantly.
-- **Status Tracking**: Visual indicators for installing/completed/failed states.
-- **Terminal Panel**: Toggleable log viewer with auto-scroll functionality.
 
 ### 🛠 Technical Features
 - **Single Binary**: Fully portable executable with all assets embedded via Go embed.
