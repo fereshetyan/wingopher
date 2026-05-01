@@ -4,7 +4,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"wingo/internal/models"
+	"wingopher/internal/models"
 )
 
 //go:embed apps.json

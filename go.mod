@@ -1,4 +1,4 @@
-module wingo
+module wingopher
 
 go 1.23.0
 

@@ -5,7 +5,7 @@ import (
 	"io"
 	"os/exec"
 	"strings"
-	"wingo/internal/models"
+	"wingopher/internal/models"
 )
 
 type WingetInstaller struct{}
@@ -29,11 +29,32 @@ func (i *WingetInstaller) CheckWinget() bool {
 }
 
 func (i *WingetInstaller) Install(app models.AppData, onLog func(string)) (string, error) {
-	return i.runWingetCommand([]string{"install", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements", "--accept-package-agreements"}, onLog)
+	args := []string{"install", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements", "--accept-package-agreements"}
+	if source := i.determineSource(app.Winget); source != "" {
+		args = append(args, "--source", source)
+	}
+	return i.runWingetCommand(args, onLog)
 }
 
 func (i *WingetInstaller) Uninstall(app models.AppData, onLog func(string)) (string, error) {
-	return i.runWingetCommand([]string{"uninstall", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements"}, onLog)
+	args := []string{"uninstall", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements"}
+	if source := i.determineSource(app.Winget); source != "" {
+		args = append(args, "--source", source)
+	}
+	return i.runWingetCommand(args, onLog)
+}
+
+func (i *WingetInstaller) determineSource(id string) string {
+	if id == "" || id == "na" {
+		return ""
+	}
+	// MS Store IDs are alphanumeric and don't contain dots (e.g. 9nt1r1c2hh7j)
+	// Winget IDs usually follow Publisher.App format (contain dots)
+	if strings.Contains(id, ".") {
+		return "winget"
+	}
+	// If it doesn't contain a dot, it's likely an MS Store ID
+	return "msstore"
 }
 
 func (i *WingetInstaller) IsInstalled(wingetID string) bool {

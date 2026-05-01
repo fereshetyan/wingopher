@@ -4,9 +4,9 @@ import (
 	"context"
 	"strings"
 	"sync"
-	"wingo/internal/installer"
-	"wingo/internal/models"
-	"wingo/internal/repository"
+	"wingopher/internal/installer"
+	"wingopher/internal/models"
+	"wingopher/internal/repository"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )

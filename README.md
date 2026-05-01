@@ -18,7 +18,7 @@ A modern, high-performance application installer for Windows that provides a GUI
 - **Real-time Log Streaming**: Live CLI output display during installations and uninstalls.
 
 ### User Interface
-- **Glassmorphism Design**: Modern transparent UI with blur effects and Mica backdrop (Windows 11).
+- **Modern Clean Design**: Professional and focused UI for efficient application management.
 - **Dark Theme**: Consistent dark color scheme across all components.
 - **200+ Applications**: Curated app database across 10+ categories (Browsers, Development, Games, etc.).
 - **Category Filtering**: Browse apps by category with dynamic sidebar.
