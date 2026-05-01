@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read # Needed for generating release notes
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
