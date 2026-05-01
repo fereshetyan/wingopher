@@ -6,7 +6,8 @@ build/
 *.dylib
 
 # Wails
-*wails*
+.wails/
+frontend/.wails/
 
 # Node / Frontend
 node_modules/
