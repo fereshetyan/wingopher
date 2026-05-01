@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { GetApps, InstallApps, UninstallApp, IsAdmin, CheckWinget, CheckInstalled, GetInstalledApps } from "../../wailsjs/go/app/App";
+import { GetApps, InstallApps, UninstallApp, IsAdmin, CheckWinget, CheckInstalled, GetInstalledApps, GetAppsWithUpdates, UpgradeApp } from "../../wailsjs/go/app/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import { AppData, InstallStatus } from '../types';
 
@@ -12,11 +12,16 @@ export function useInstallManager() {
     const [isAdmin, setIsAdmin] = useState(true);
     const [hasWinget, setHasWinget] = useState(true);
     const [installedApps, setInstalledApps] = useState<Set<string>>(new Set());
+    const [appsWithUpdates, setAppsWithUpdates] = useState<Set<string>>(new Set());
     const [isLoading, setIsLoading] = useState(true);
 
     const refreshInstalled = useCallback(async () => {
-        const installed = await GetInstalledApps();
+        const [installed, updates] = await Promise.all([
+            GetInstalledApps(),
+            GetAppsWithUpdates()
+        ]);
         setInstalledApps(new Set(installed));
+        setAppsWithUpdates(new Set(updates));
     }, []);
 
     useEffect(() => {
@@ -39,18 +44,21 @@ export function useInstallManager() {
             
             if (status.status === 'completed') {
                 if (status.message === 'Done') {
-                    // Optimistically add to installed apps
                     setInstalledApps(prev => new Set(prev).add(status.id));
                 } else if (status.message === 'Uninstalled') {
-                    // Optimistically remove from installed apps
                     setInstalledApps(prev => {
+                        const next = new Set(prev);
+                        next.delete(status.id);
+                        return next;
+                    });
+                } else if (status.message === 'Updated') {
+                    setAppsWithUpdates(prev => {
                         const next = new Set(prev);
                         next.delete(status.id);
                         return next;
                     });
                 }
 
-                // Verify after a short delay to ensure winget database is updated
                 setTimeout(() => {
                     CheckInstalled(status.id).then(isInstalled => {
                         setInstalledApps(prev => {
@@ -60,12 +68,20 @@ export function useInstallManager() {
                             return next;
                         });
                     });
+                    GetAppsWithUpdates().then(updates => {
+                        setAppsWithUpdates(new Set(updates));
+                    });
                 }, 3000);
             }
         });
 
+        const finishedOff = EventsOn("all_installations_finished", () => {
+            refreshInstalled();
+        });
+
         return () => {
             statusOff();
+            finishedOff();
         };
     }, [refreshInstalled]);
 
@@ -99,6 +115,10 @@ export function useInstallManager() {
         UninstallApp(id);
     }, []);
 
+    const upgrade = useCallback((id: string) => {
+        UpgradeApp(id);
+    }, []);
+
     const selectAll = useCallback(() => {
         const allIds = filteredApps.map(app => app.id);
         setSelectedApps(new Set(allIds));
@@ -121,9 +141,11 @@ export function useInstallManager() {
         isAdmin,
         hasWinget,
         installedApps,
+        appsWithUpdates,
         toggleApp,
         install,
         uninstall,
+        upgrade,
         selectAll,
         clearSelection,
         refreshInstalled,

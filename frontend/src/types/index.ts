@@ -5,6 +5,7 @@ export interface AppData {
     description: string;
     winget: string;
     link: string;
+    is_system_app?: boolean;
 }
 
 export interface InstallStatus {

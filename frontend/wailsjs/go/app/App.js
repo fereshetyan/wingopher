@@ -14,6 +14,10 @@ export function GetApps() {
   return window['go']['app']['App']['GetApps']();
 }
 
+export function GetAppsWithUpdates() {
+  return window['go']['app']['App']['GetAppsWithUpdates']();
+}
+
 export function GetInstalledApps() {
   return window['go']['app']['App']['GetInstalledApps']();
 }
@@ -28,4 +32,8 @@ export function IsAdmin() {
 
 export function UninstallApp(arg1) {
   return window['go']['app']['App']['UninstallApp'](arg1);
+}
+
+export function UpgradeApp(arg1) {
+  return window['go']['app']['App']['UpgradeApp'](arg1);
 }

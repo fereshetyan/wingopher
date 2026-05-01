@@ -2,11 +2,24 @@ package installer
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"os/exec"
 	"strings"
 	"wingopher/internal/models"
 )
+
+type Installer interface {
+	IsAdmin() bool
+	CheckWinget() bool
+	Install(ctx context.Context, app models.AppData, onLog func(string)) (string, error)
+	Uninstall(ctx context.Context, app models.AppData, onLog func(string)) (string, error)
+	Upgrade(ctx context.Context, app models.AppData, onLog func(string)) (string, error)
+	GetAppsWithUpdates(ctx context.Context) (map[string]bool, error)
+	IsInstalled(wingetID string) bool
+	GetInstalledIDs(ctx context.Context) (map[string]bool, error)
+	GetCleanErrorMessage(err error, output string) string
+}
 
 type WingetInstaller struct{}
 
@@ -28,20 +41,42 @@ func (i *WingetInstaller) CheckWinget() bool {
 	return err == nil
 }
 
-func (i *WingetInstaller) Install(app models.AppData, onLog func(string)) (string, error) {
+func (i *WingetInstaller) Install(ctx context.Context, app models.AppData, onLog func(string)) (string, error) {
 	args := []string{"install", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements", "--accept-package-agreements"}
 	if source := i.determineSource(app.Winget); source != "" {
 		args = append(args, "--source", source)
 	}
-	return i.runWingetCommand(args, onLog)
+	return i.runWingetCommand(ctx, args, onLog)
 }
 
-func (i *WingetInstaller) Uninstall(app models.AppData, onLog func(string)) (string, error) {
+func (i *WingetInstaller) Uninstall(ctx context.Context, app models.AppData, onLog func(string)) (string, error) {
 	args := []string{"uninstall", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements"}
 	if source := i.determineSource(app.Winget); source != "" {
 		args = append(args, "--source", source)
 	}
-	return i.runWingetCommand(args, onLog)
+	return i.runWingetCommand(ctx, args, onLog)
+}
+
+func (i *WingetInstaller) Upgrade(ctx context.Context, app models.AppData, onLog func(string)) (string, error) {
+	args := []string{"upgrade", "--id", app.Winget, "--exact", "--silent", "--accept-source-agreements"}
+	if source := i.determineSource(app.Winget); source != "" {
+		args = append(args, "--source", source)
+	}
+	return i.runWingetCommand(ctx, args, onLog)
+}
+
+func (i *WingetInstaller) GetAppsWithUpdates(ctx context.Context) (map[string]bool, error) {
+	cmd := exec.CommandContext(ctx, "cmd", "/c", "set Microsoft.Winget.Settings_TermWidth=500 && chcp 65001 > nul && winget upgrade --accept-source-agreements")
+	cmd.SysProcAttr = getSysProcAttr()
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		if len(output) == 0 {
+			return nil, err
+		}
+	}
+
+	return i.parseWingetTable(string(output)), nil
 }
 
 func (i *WingetInstaller) determineSource(id string) string {
@@ -67,9 +102,9 @@ func (i *WingetInstaller) IsInstalled(wingetID string) bool {
 	return err == nil
 }
 
-func (i *WingetInstaller) GetInstalledIDs() (map[string]bool, error) {
+func (i *WingetInstaller) GetInstalledIDs(ctx context.Context) (map[string]bool, error) {
 	// Use a very wide terminal width to minimize wrapping
-	cmd := exec.Command("cmd", "/c", "set Microsoft.Winget.Settings_TermWidth=500 && chcp 65001 > nul && winget list --accept-source-agreements")
+	cmd := exec.CommandContext(ctx, "cmd", "/c", "set Microsoft.Winget.Settings_TermWidth=500 && chcp 65001 > nul && winget list --accept-source-agreements")
 	cmd.SysProcAttr = getSysProcAttr()
 	
 	output, err := cmd.CombinedOutput()
@@ -79,41 +114,42 @@ func (i *WingetInstaller) GetInstalledIDs() (map[string]bool, error) {
 		}
 	}
 
-	installed := make(map[string]bool)
-	outputStr := string(output)
+	return i.parseWingetTable(string(output)), nil
+}
+
+func (i *WingetInstaller) parseWingetTable(output string) map[string]bool {
+	res := make(map[string]bool)
 	
 	// Remove carriage returns and split into lines
-	outputStr = strings.ReplaceAll(outputStr, "\r", "")
-	lines := strings.Split(outputStr, "\n")
+	output = strings.ReplaceAll(output, "\r", "")
+	lines := strings.Split(output, "\n")
 
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		if trimmed == "" || strings.HasPrefix(trimmed, "-") {
+		
+		// Skip empty lines, separators, and headers
+		if trimmed == "" || strings.HasPrefix(trimmed, "-") || strings.Contains(trimmed, "Id") && strings.Contains(trimmed, "Version") {
 			continue
 		}
 
 		// Look for common ID patterns or separators
-		// We use Fields to get parts of the line.
-		// Usually the ID is the second column, but it might be wrapped.
+		// We collect all fields and let the App layer match them against the repository
 		fields := strings.Fields(trimmed)
 		if len(fields) >= 2 {
-			// In many cases, the ID is the second field
-			// We'll collect all fields that look like IDs (contain dots or are specific known IDs)
 			for _, field := range fields {
-				if strings.Contains(field, ".") || strings.Contains(field, "\\") {
-					installed[strings.ToLower(field)] = true
-				}
+				// We lowercase for consistency, matching the App layer's check
+				res[strings.ToLower(field)] = true
 			}
 		}
 	}
 
-	return installed, nil
+	return res
 }
 
-func (i *WingetInstaller) runWingetCommand(args []string, onLog func(string)) (string, error) {
+func (i *WingetInstaller) runWingetCommand(ctx context.Context, args []string, onLog func(string)) (string, error) {
 	// Join args and escape if necessary, but here we just need to prepend chcp
 	fullArgs := append([]string{"/c", "chcp 65001 > nul && winget"}, args...)
-	cmd := exec.Command("cmd", fullArgs...)
+	cmd := exec.CommandContext(ctx, "cmd", fullArgs...)
 	cmd.SysProcAttr = getSysProcAttr()
 
 	stdout, _ := cmd.StdoutPipe()
@@ -167,6 +203,18 @@ func (i *WingetInstaller) GetCleanErrorMessage(err error, output string) string 
 	}
 	if strings.Contains(output, "0x80070643") {
 		return "Installation failed (Error 0x80070643)"
+	}
+	if strings.Contains(output, "install technology is different") {
+		return "Installer mismatch (Manual update required)"
+	}
+	if strings.Contains(output, "A newer version was found, but the install technology is different") {
+		return "Installer mismatch"
+	}
+	if strings.Contains(output, "0x80041010") {
+		return "Application not found or mismatch"
+	}
+	if strings.Contains(output, "Another installation is already in progress") {
+		return "Busy (Another install running)"
 	}
 	return "Operation failed"
 }

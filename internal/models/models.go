@@ -9,6 +9,7 @@ type AppData struct {
 	Link        string `json:"link"`
 	Winget      string `json:"winget"`
 	Foss        bool   `json:"foss"`
+	IsSystemApp bool   `json:"is_system_app"`
 }
 
 type InstallStatus struct {

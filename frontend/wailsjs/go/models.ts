@@ -9,6 +9,7 @@ export namespace models {
 	    link: string;
 	    winget: string;
 	    foss: boolean;
+	    is_system_app: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new AppData(source);
@@ -24,6 +25,7 @@ export namespace models {
 	        this.link = source["link"];
 	        this.winget = source["winget"];
 	        this.foss = source["foss"];
+	        this.is_system_app = source["is_system_app"];
 	    }
 	}
 

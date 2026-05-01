@@ -8,6 +8,8 @@ export function CheckWinget():Promise<boolean>;
 
 export function GetApps():Promise<Array<models.AppData>>;
 
+export function GetAppsWithUpdates():Promise<Array<string>>;
+
 export function GetInstalledApps():Promise<Array<string>>;
 
 export function InstallApps(arg1:Array<string>):Promise<void>;
@@ -15,3 +17,5 @@ export function InstallApps(arg1:Array<string>):Promise<void>;
 export function IsAdmin():Promise<boolean>;
 
 export function UninstallApp(arg1:string):Promise<void>;
+
+export function UpgradeApp(arg1:string):Promise<void>;
