@@ -6,7 +6,15 @@
 
 A modern, high-performance application installer for Windows that provides a GUI for the winget package manager, built with Wails (Go + React/TS).
 
-</div>
+## 🚀 Quick Start (One-liner)
+
+Run the following command in **PowerShell** (as Administrator) to instantly download and launch WinGopher:
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/fereshetyan/wingopher/main/install.ps1 | iex
+```
+
+---
 
 ## Features
 
