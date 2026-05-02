@@ -41,14 +41,9 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Install UPX
-        uses: crazy-max/ghaction-upx@v3
-        with:
-          install-only: true
-
       - name: Build App
         run: |
-          wails build -platform windows/amd64 -upx -upxflags="--best --lzma"
+          wails build -platform windows/amd64 -trimpath
 
       - name: Release
         uses: softprops/action-gh-release@v2
