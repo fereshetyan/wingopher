@@ -62,13 +62,13 @@ func (a *App) InstallApps(ids []string) {
 		wg.Add(1)
 		go func(app models.AppData) {
 			defer wg.Done()
-			
+
 			select {
-			case semaphore <- struct{}{}:
-				defer func() { <-semaphore }()
 			case <-a.ctx.Done():
 				a.emitStatus(app.ID, "failed", "Cancelled", "Installation cancelled.")
 				return
+			case semaphore <- struct{}{}:
+				defer func() { <-semaphore }()
 			}
 
 			var currentLogs strings.Builder
@@ -151,7 +151,7 @@ func (a *App) CheckInstalled(id string) bool {
 	if !ok {
 		return false
 	}
-	return a.installer.IsInstalled(app.Winget)
+	return a.installer.IsInstalled(a.ctx, app.Winget)
 }
 
 func (a *App) GetInstalledApps() []string {

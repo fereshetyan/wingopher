@@ -52,12 +52,12 @@ func (r *AppRepository) GetAll() []models.AppData {
 	for _, app := range r.apps {
 		result = append(result, app)
 	}
-	
+
 	// Sort by ID for deterministic output
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].ID < result[j].ID
 	})
-	
+
 	return result
 }
 

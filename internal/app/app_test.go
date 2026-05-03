@@ -24,19 +24,29 @@ func (m *mockRepository) GetByID(id string) (models.AppData, bool) {
 }
 
 type mockInstaller struct {
-	admin    bool
-	winget   bool
+	admin     bool
+	winget    bool
 	installed map[string]bool
 }
 
-func (m *mockInstaller) IsAdmin() bool { return m.admin }
+func (m *mockInstaller) IsAdmin() bool     { return m.admin }
 func (m *mockInstaller) CheckWinget() bool { return m.winget }
-func (m *mockInstaller) Install(ctx context.Context, app models.AppData, onLog func(string)) (string, error) { return "installed", nil }
-func (m *mockInstaller) Uninstall(ctx context.Context, app models.AppData, onLog func(string)) (string, error) { return "uninstalled", nil }
-func (m *mockInstaller) Upgrade(ctx context.Context, app models.AppData, onLog func(string)) (string, error) { return "upgraded", nil }
-func (m *mockInstaller) GetAppsWithUpdates(ctx context.Context) (map[string]bool, error) { return nil, nil }
-func (m *mockInstaller) IsInstalled(id string) bool { return m.installed[id] }
-func (m *mockInstaller) GetInstalledIDs(ctx context.Context) (map[string]bool, error) { return m.installed, nil }
+func (m *mockInstaller) Install(ctx context.Context, app models.AppData, onLog func(string)) (string, error) {
+	return "installed", nil
+}
+func (m *mockInstaller) Uninstall(ctx context.Context, app models.AppData, onLog func(string)) (string, error) {
+	return "uninstalled", nil
+}
+func (m *mockInstaller) Upgrade(ctx context.Context, app models.AppData, onLog func(string)) (string, error) {
+	return "upgraded", nil
+}
+func (m *mockInstaller) GetAppsWithUpdates(ctx context.Context) (map[string]bool, error) {
+	return nil, nil
+}
+func (m *mockInstaller) IsInstalled(ctx context.Context, id string) bool { return m.installed[id] }
+func (m *mockInstaller) GetInstalledIDs(ctx context.Context) (map[string]bool, error) {
+	return m.installed, nil
+}
 func (m *mockInstaller) GetCleanErrorMessage(err error, output string) string { return "error" }
 
 func TestApp_GetApps(t *testing.T) {

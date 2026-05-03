@@ -21,15 +21,15 @@ func main() {
 	// Initialize dependencies
 	repo := repository.NewAppRepository()
 	inst := installer.NewWingetInstaller()
-	
+
 	// Create an instance of the app structure
 	a := app.NewApp(repo, inst)
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "WinGopher",
-		Width:  1200,
-		Height: 800,
+		Title:         "WinGopher",
+		Width:         1200,
+		Height:        800,
 		DisableResize: true,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
