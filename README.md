@@ -2,14 +2,12 @@
   <img src="assets/images/wingopher.png" width="400" alt="WinGopher Logo">
 
   # WinGopher
-  **Parallel Windows App Installer**
+  **A simple GUI for the Windows Package Manager (winget)**
 
   [![Go Version](https://img.shields.io/github/go-mod/go-version/fereshetyan/wingopher?style=flat-square&logo=go)](https://go.dev/)
   [![Wails](https://img.shields.io/badge/built%20with-Wails-red?style=flat-square)](https://wails.io/)
   [![License](https://img.shields.io/github/license/fereshetyan/wingopher?style=flat-square)](LICENSE)
   [![Platform](https://img.shields.io/badge/platform-Windows-blue?style=flat-square&logo=windows)](https://www.microsoft.com/windows)
-
-  A simple GUI for the Windows Package Manager (winget).
 </div>
 
 ---
